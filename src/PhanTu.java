@@ -4,19 +4,47 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class PhanTu<T extends Comparable<T>> {
+class MyInteger implements GreaterComparable {
+    int value;
+
+    public MyInteger(int value) {
+        this.value = value;
+    }
+
+    int getValue() {
+        return this.value;
+    }
+
+    @Override
+    public String toString() {
+        return "" + value;
+    }
+
+    @Override
+    public boolean isGreaterThan(GreaterComparable value) {
+        if (value instanceof MyInteger) {
+            if (this.value > ((MyInteger) value).value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+public class PhanTu<T extends GreaterComparable> {
     private T value;
 
     public PhanTu(T value) {
         this.value = value;
     }
 
-    public boolean isGreaterThan(PhanTu<T> a) {
-        return value.isGreaterThan(a.getValue());
-    }
-
     public T getValue() {
         return value;
+    }
+
+    public boolean isGreaterThan(PhanTu other) {
+        return value.isGreaterThan(other.value);
     }
 
     public static void main(String[] args) throws IOException {
@@ -24,16 +52,16 @@ public class PhanTu<T extends Comparable<T>> {
         Scanner scanner = new Scanner(reader);
 
         int count = scanner.nextInt();
-        List<PhanTu<Integer>> list = new ArrayList<>();
+        List<PhanTu<MyInteger>> list = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            list.add(new PhanTu<Integer>(new Integer(scanner.nextInt())));
+            list.add(new PhanTu<MyInteger>(new MyInteger(scanner.nextInt())));
         }
 
         for (int i = 0; i < list.size() - 1; i++) {
             for (int j = i + 1; j < list.size(); j++) {
                 if (list.get(i).isGreaterThan(list.get(j))) {
-                    PhanTu<Integer> temp = list.get(i);
+                    PhanTu<MyInteger> temp = list.get(i);
                     list.set(i, list.get(j));
                     list.set(j, temp);
                 }
@@ -44,5 +72,6 @@ public class PhanTu<T extends Comparable<T>> {
         for (int i = 0; i < count; i++) {
             writer.write(list.get(i).getValue().toString() + "\n");
         }
+        writer.close();
     }
 }
